@@ -25,14 +25,14 @@ export function SelectDimension({ setDimension }: Props) {
          return;
       }
 
-      const n = parseInt(dimension, 10);
-      const sqrtOfN = Math.sqrt(n);
+      // const n = parseInt(dimension, 10);
+      // const sqrtOfN = Math.sqrt(n);
 
-      const isDimensionValid = sqrtOfN % 1 === 0;
-      if (!isDimensionValid) {
-         window.alert("Please enter a valid sudoku dimension");
-         return;
-      }
+      // const isDimensionValid = sqrtOfN % 1 === 0;
+      // if (!isDimensionValid) {
+      //    window.alert("Please enter a valid sudoku dimension");
+      //    return;
+      // }
 
       const url = new URL(window.location.href);
       url.searchParams.set("dimension", dimension);

@@ -12,12 +12,13 @@ function isSafe({ board, col, n, num, row }: IsSafeArgs) {
       if (board[k][col] === num) return false;
    }
 
-   const sqrtOfN = Math.sqrt(n);
+   const sqrtOfN = Math.floor(Math.sqrt(n));
    const boxRow = Math.floor(row / sqrtOfN) * sqrtOfN;
    const boxCol = Math.floor(col / sqrtOfN) * sqrtOfN;
 
    for (let i = 0; i < sqrtOfN; i++) {
       for (let j = 0; j < sqrtOfN; j++) {
+         if (boxRow + i >= n || boxCol + j >= n) continue;
          if (board[boxRow + i][boxCol + j] === num) return false;
       }
    }

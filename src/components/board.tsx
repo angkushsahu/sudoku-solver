@@ -85,7 +85,9 @@ export function Board({ dimension, setDimension }: Props) {
                {board.map((row, r) =>
                   row.map((cell, c) => {
                      const valid = isCellValid({ board, col: c, n, num: cell, row: r });
-                     const isSubGrid = (Math.floor(r / Math.sqrt(n)) + Math.floor(c / Math.sqrt(n))) % 2 === 0;
+                     const sqrtOfN = Math.sqrt(n);
+                     const isSubGrid =
+                        sqrtOfN % 1 === 0 ? (Math.floor(r / Math.sqrt(n)) + Math.floor(c / Math.sqrt(n))) % 2 === 0 : false;
 
                      return (
                         <input

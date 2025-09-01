@@ -16,7 +16,7 @@ export function isCellValid({ board, col, n, num, row }: IsCellValidArgs) {
    }
 
    // checking for subgrid validity below
-   const sqrtOfN = Math.sqrt(n);
+   const sqrtOfN = Math.floor(Math.sqrt(n));
    const boxRow = Math.floor(row / sqrtOfN) * sqrtOfN;
    const boxCol = Math.floor(col / sqrtOfN) * sqrtOfN;
 
@@ -24,6 +24,7 @@ export function isCellValid({ board, col, n, num, row }: IsCellValidArgs) {
       for (let j = 0; j < sqrtOfN; j++) {
          const r = boxRow + i;
          const c = boxCol + j;
+         if (r >= n || c >= n) continue;
          if ((r !== row || c !== col) && board[r][c] === num) return false;
       }
    }
