@@ -1,17 +1,15 @@
 import { useRef, useState, type Dispatch, type KeyboardEvent, type SetStateAction } from "react";
 
-import { isBoardValid, isCellValid, solveSudoku } from "../utils";
-import { Button, SecondaryButton } from "./buttons";
+import { emptyBoard, is9x9BoardValid, is9x9CellValid, solve9x9Sudoku } from "../../utils";
+import type { ValidDimensions } from "../../constants";
+import { Button, SecondaryButton } from "../buttons";
 
 type Props = {
-   dimension: string;
-   setDimension: Dispatch<SetStateAction<string>>;
+   setDimension: Dispatch<SetStateAction<ValidDimensions | null>>;
 };
 
-const emptyBoard = (n: number) => Array.from({ length: n }, () => Array(n).fill(0));
-
-export function Board({ dimension, setDimension }: Props) {
-   const n = parseInt(dimension, 10);
+export function Board9x9({ setDimension }: Props) {
+   const n = 9;
 
    const [board, setBoard] = useState<Array<Array<number>>>(emptyBoard(n));
    const [activeCell, setActiveCell] = useState<{ r: number; c: number } | null>(null);
@@ -19,7 +17,7 @@ export function Board({ dimension, setDimension }: Props) {
    const cellRefs = useRef<Array<Array<HTMLInputElement>>>(emptyBoard(n));
 
    function goBack() {
-      setDimension("");
+      setDimension(null);
 
       const url = new URL(window.location.href);
       url.searchParams.delete("dimension");
@@ -61,14 +59,13 @@ export function Board({ dimension, setDimension }: Props) {
    }
 
    function handleSolve() {
-      if (!isBoardValid({ board, n })) {
+      if (!is9x9BoardValid(board)) {
          window.alert("Invalid board! Duplicates found");
          return;
       }
 
       const boardCopy = board.map((row) => [...row]);
-      const solved = solveSudoku({ board: boardCopy, n });
-
+      const solved = solve9x9Sudoku(boardCopy);
       if (!solved) window.alert("No solution exists for this sudoku");
       else setBoard(boardCopy);
    }
@@ -84,10 +81,8 @@ export function Board({ dimension, setDimension }: Props) {
             <div className="grid gap-1" style={{ gridTemplateColumns: `repeat(${n}, minmax(0, 1fr))`, width: "fit-content" }}>
                {board.map((row, r) =>
                   row.map((cell, c) => {
-                     const valid = isCellValid({ board, col: c, n, num: cell, row: r });
-                     const sqrtOfN = Math.sqrt(n);
-                     const isSubGrid =
-                        sqrtOfN % 1 === 0 ? (Math.floor(r / Math.sqrt(n)) + Math.floor(c / Math.sqrt(n))) % 2 === 0 : false;
+                     const valid = is9x9CellValid({ board, col: c, num: cell, row: r });
+                     const isSubGrid = (Math.floor(r / 3) + Math.floor(c / 3)) % 2 === 0;
 
                      return (
                         <input

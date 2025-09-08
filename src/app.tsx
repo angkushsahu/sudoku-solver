@@ -1,30 +1,59 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
 
-import { Board, SelectDimension } from "./components";
-import { isNumeric } from "./utils";
+import { validDimensions, type ValidDimensions } from "./constants";
+import { Board6x6, Board9x9, SecondaryButton } from "./components";
 
 export function App() {
-   const [dimension, setDimension] = useState("");
+   const [dimension, setDimension] = useState<ValidDimensions | null>(null);
 
    useEffect(() => {
       const url = new URL(window.location.href);
       const param = url.searchParams.get("dimension");
       if (!param) {
-         setDimension("");
+         setDimension(null);
          return;
       }
 
-      if (isNumeric(param)) setDimension(param);
-      else setDimension("");
+      if (validDimensions.includes(param as ValidDimensions)) setDimension(param as ValidDimensions);
+      else setDimension(null);
    }, []);
 
    return (
       <main className="flex min-h-screen items-center justify-center p-5">
-         {dimension && dimension.length >= 1 ? (
-            <Board dimension={dimension} setDimension={setDimension} />
-         ) : (
-            <SelectDimension setDimension={setDimension} />
-         )}
+         <Pages dimension={dimension} setDimension={setDimension} />
       </main>
    );
+}
+
+type PagesProps = {
+   dimension: ValidDimensions | null;
+   setDimension: Dispatch<SetStateAction<ValidDimensions | null>>;
+};
+
+export function Pages({ dimension, setDimension }: PagesProps) {
+   function setBoard(type: ValidDimensions) {
+      const url = new URL(window.location.href);
+      url.searchParams.set("dimension", type);
+      window.history.replaceState({}, "", url.toString());
+
+      setDimension(type);
+   }
+
+   if (!dimension) {
+      return (
+         <div className="flex flex-col gap-y-4">
+            <h1 className="mb-2 text-2xl">Select dimension</h1>
+            <SecondaryButton onClick={() => setBoard("6x6")}>6 x 6</SecondaryButton>
+            <SecondaryButton onClick={() => setBoard("9x9")}>9 x 9</SecondaryButton>
+         </div>
+      );
+   }
+
+   if (dimension === "6x6") {
+      return <Board6x6 setDimension={setDimension} />;
+   } else if (dimension === "9x9") {
+      return <Board9x9 setDimension={setDimension} />;
+   }
+
+   return null;
 }
