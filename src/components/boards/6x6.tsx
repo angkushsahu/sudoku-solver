@@ -1,6 +1,6 @@
 import { useRef, useState, type Dispatch, type KeyboardEvent, type SetStateAction } from "react";
 
-import { emptyBoard, is6x6BoardValid, is6x6CellValid, solve6x6Sudoku } from "../../utils";
+import { emptyBoard, flattenAndCopy, is6x6BoardValid, is6x6CellValid, solve6x6Sudoku } from "../../utils";
 import type { ValidDimensions } from "../../constants";
 import { Button, SecondaryButton } from "../buttons";
 
@@ -68,6 +68,8 @@ export function Board6x6({ setDimension }: Props) {
       const solved = solve6x6Sudoku(boardCopy);
       if (!solved) window.alert("No solution exists for this sudoku");
       else setBoard(boardCopy);
+
+      flattenAndCopy(boardCopy);
    }
 
    return (
